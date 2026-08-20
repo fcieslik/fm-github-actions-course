@@ -1,5 +1,9 @@
 name: Deploy
 
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 env:
   NODE_VERSION: 22
   ARTIFACT_NAME: build
@@ -9,6 +13,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+
+permissions: {}
 
 jobs:
   build:
@@ -27,11 +33,11 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: ${{ env.BUILD_DIR }}
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a
         with:
           role-to-assume: arn:aws:iam::427047664719:role/GitHubActionsDeployRole
           aws-region: eu-central-1
