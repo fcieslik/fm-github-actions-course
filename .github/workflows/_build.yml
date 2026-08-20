@@ -22,20 +22,26 @@ jobs:
   pre-check:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Frontend basic checks
         uses: ./.github/actions/fe-check
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ inputs.node-version }}
 
   build:
     needs: pre-check
     runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.echo.outputs.name }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Build react app
         uses: ./.github/actions/build-react
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          artifact-name: ${{ env.ARTIFACT_NAME }}
+          node-version: ${{ inputs.node-version }}
+          artifact-name: ${{ inputs.artifact-name }}
       - name: Echo artifact name
         id: echo
         run: echo "name=${{ inputs.artifact-name }}" >> "$GITHUB_OUTPUT"

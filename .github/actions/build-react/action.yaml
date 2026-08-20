@@ -10,15 +10,10 @@ inputs:
     description: Name to give the uploaded build artifact.
     required: false
     default: dist
-outputs:
-  artifact-name:
-    description: Name of the artifact produced by the build job.
-    value: ${{ jobs.build.outputs.artifact-name }}
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
