@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
+    "check": "prettier --check .",
     "dev": "react-router dev",
+    "format": "prettier --write .",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },
@@ -22,8 +24,12 @@
     "@types/node": "^22",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "prettier": "^3.9.6",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3",
     "vite": "^8.0.3"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
