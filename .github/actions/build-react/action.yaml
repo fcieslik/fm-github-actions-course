@@ -1,0 +1,42 @@
+name: Build React App
+description: Build React app using Node.js
+
+inputs:
+  node-version:
+    description: Node.js version (e.g. `22.22`) to use for the build.
+    required: false
+    default: "22.22"
+  artifact-name:
+    description: Name to give the uploaded build artifact.
+    required: false
+    default: dist
+outputs:
+  artifact-name:
+    description: Name of the artifact produced by the build job.
+    value: ${{ jobs.build.outputs.artifact-name }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: "npm"
+    - name: Install
+      run: npm ci
+      shell: bash
+
+    - name: Build
+      run: npm run build
+      shell: bash
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: build/client/
+
+    - name: Echo artifact name
+      shell: bash
+      id: echo
+      run: echo "name=${{ inputs.artifact-name }}" >> "$GITHUB_OUTPUT"

@@ -2,46 +2,20 @@ name: Deploy
 
 env:
   NODE_VERSION: 22
+  ARTIFACT_NAME: build
+  BUILD_DIR: build/client
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - ".github/workflows/deploy.yml"
-      - "docs/**"
-      - ".agents/**"
   workflow_dispatch:
 
 jobs:
-  pre-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci
-      - run: npm run typecheck
-      - name: Check formatting
-        run: npm run check
-
   build:
-    needs: pre-check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: build/client/
+    uses: ./.github/workflows/_build.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+      artifact-name: ${{ env.ARTIFACT_NAME }}
 
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -50,11 +24,11 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: build
-          path: build/client/
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.BUILD_DIR }}
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
-      - run: aws s3 sync build/client/ s3://fm-github-actions-course/ --delete
+      - run: aws s3 sync ${{ env.BUILD_DIR }}/ s3://fm-github-actions-course/ --delete
