@@ -1,10 +1,5 @@
 name: Build (reusable)
 
-env:
-  NODE_VERSION: 22
-  ARTIFACT_NAME: build
-  BUILD_DIR: build/client
-
 on:
   workflow_call:
     inputs:

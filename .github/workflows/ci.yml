@@ -1,10 +1,5 @@
 name: CI
 
-env:
-  NODE_VERSION: 22
-  ARTIFACT_NAME: build
-  BUILD_DIR: build/client
-
 on:
   pull_request:
     branches: [main]
@@ -15,5 +10,5 @@ jobs:
   build:
     uses: ./.github/workflows/_build.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
-      artifact-name: ${{ env.ARTIFACT_NAME }}
+      node-version: "22"
+      artifact-name: "build"
